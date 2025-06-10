@@ -1,0 +1,42 @@
+name: Regression Run
+
+on:
+  schedule:
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+jobs:
+  e2e_test:
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: npm ci --force
+
+    - name: Install playwright
+      run: npx playwright install
+    
+    - name: Run all tests on ${{ matrix.browser }} browser
+      run: npx playwright test --project=${{ matrix.browser }}
+
+    - name: Archive test reports
+      run: |
+          mkdir -p artifacts
+          zip -r artifacts/test-reports-${{ matrix.browser }}.zip playwright-report
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report-${{ matrix.browser }}
+        path: artifacts/test-reports-${{ matrix.browser }}.zip
+        retention-days: 10
