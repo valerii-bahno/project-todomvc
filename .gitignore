@@ -1,0 +1,15 @@
+node_modules/
+test-results/
+test-artifacts/
+!/*/*/test-results/
+playwright-report/
+html-report/
+test-out/
+videos/
+screenshots/
+.env
+tests-out/
+
+#IDE
+.idea/
+.vscode/
