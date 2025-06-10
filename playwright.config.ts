@@ -18,6 +18,7 @@ export default defineConfig({
         baseURL: process.env.BASE_URL
     },
     globalSetup: require.resolve('./src/global-setup'),
+    reporter: [['html', { outputFolder: 'playwright-report', open: 'never' }]],
 
     projects: [
         {
